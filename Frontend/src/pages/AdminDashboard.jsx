@@ -115,295 +115,288 @@ const AdminDashboard = () => {
 
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <div className="user-info">
-          <span>Welcome, {user?.name}</span>
-          <button onClick={logoutUser} className="logout-btn">Logout</button>
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-mark">★</span>
+          <span>StoreRate</span>
         </div>
-      </header>
 
-      <nav className="dashboard-nav">
-        <button onClick={() => setActiveTab('dashboard')} className={activeTab === 'dashboard' ? 'active' : ''}>
-          Dashboard
-        </button>
-        <button onClick={() => setActiveTab('users')} className={activeTab === 'users' ? 'active' : ''}>
-          Users ({users.length})
-        </button>
-        <button onClick={() => setActiveTab('stores')} className={activeTab === 'stores' ? 'active' : ''}>
-          Stores ({stores.length})
-        </button>
-      </nav>
+        <nav className="sidebar-nav">
+          <button className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
+            <span className="nav-dot" /> Dashboard
+          </button>
+          <button className={`nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
+            <span className="nav-dot" /> Users ({users.length})
+          </button>
+          <button className={`nav-item ${activeTab === 'stores' ? 'active' : ''}`} onClick={() => setActiveTab('stores')}>
+            <span className="nav-dot" /> Stores ({stores.length})
+          </button>
+        </nav>
 
-      <main className="dashboard-content">
-        {activeTab === 'dashboard' && (
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h3>Total Users</h3>
-              <p className="stat-number">{stats.totalUsers}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Total Stores</h3>
-              <p className="stat-number">{stats.totalStores}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Total Ratings</h3>
-              <p className="stat-number">{stats.totalRatings}</p>
-            </div>
-            <div className="stat-card actions">
-              <button onClick={() => setShowUserForm(true)} className="btn-primary">Add User</button>
-              <button onClick={() => setShowStoreForm(true)} className="btn-primary">Add Store</button>
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="avatar">{user?.name?.charAt(0)?.toUpperCase() || 'A'}</div>
+            <div>
+              <div>{user?.name}</div>
+              <small>{user?.role}</small>
             </div>
           </div>
-        )}
+          <button className="btn-ghost" style={{ width: '100%', marginTop: '12px' }} onClick={logoutUser}>Log out</button>
+        </div>
+      </aside>
 
-        {activeTab === 'users' && (
-          <div className="table-section">
-            <div className="filters">
-              <input
-                type="text"
-                placeholder="Filter by name"
-                value={userFilters.name}
-                onChange={(e) => setUserFilters({ ...userFilters, name: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchUsers()}
-              />
-              <input
-                type="text"
-                placeholder="Filter by email"
-                value={userFilters.email}
-                onChange={(e) => setUserFilters({ ...userFilters, email: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchUsers()}
-              />
-              <input
-                type="text"
-                placeholder="Filter by address"
-                value={userFilters.address}
-                onChange={(e) => setUserFilters({ ...userFilters, address: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchUsers()}
-              />
-              <select
-                value={userFilters.role}
-                onChange={(e) => setUserFilters({ ...userFilters, role: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchUsers()}
-              >
-                <option value="">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-                <option value="owner">Owner</option>
-              </select>
-              <button onClick={fetchUsers} className="btn-secondary">Apply Filters</button>
-              <button onClick={() => setShowUserForm(true)} className="btn-primary">Add User</button>
-            </div>
-
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Role</th>
-                  <th>Rating (if Owner)</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.address || 'N/A'}</td>
-                    <td><span className={`role-badge ${user.role}`}>{user.role}</span></td>
-                    <td>{user.role === 'owner' ? (user.rating ? Number(user.rating).toFixed(1) : 'No ratings') : '-'}</td>
-                    <td>
-                      {user.role !== 'admin' && (
-                        <button onClick={() => handleDeleteUser(user.id)} className="btn-danger">Delete</button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <main className="dashboard-main">
+        <header className="topbar">
+          <div className="topbar-title">
+            <h2>Admin Dashboard</h2>
+            <div className="topbar-subtitle">Welcome back, {user?.name}</div>
           </div>
-        )}
-
-        {activeTab === 'stores' && (
-          <div className="table-section">
-            <div className="filters">
-              <input
-                type="text"
-                placeholder="Filter by name"
-                value={storeFilters.name}
-                onChange={(e) => setStoreFilters({ ...storeFilters, name: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchStores()}
-              />
-              <input
-                type="text"
-                placeholder="Filter by email"
-                value={storeFilters.email}
-                onChange={(e) => setStoreFilters({ ...storeFilters, email: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchStores()}
-              />
-              <input
-                type="text"
-                placeholder="Filter by address"
-                value={storeFilters.address}
-                onChange={(e) => setStoreFilters({ ...storeFilters, address: e.target.value })}
-                onKeyPress={(e) => e.key === 'Enter' && fetchStores()}
-              />
-              <button onClick={fetchStores} className="btn-secondary">Apply Filters</button>
-              <button onClick={() => setShowStoreForm(true)} className="btn-primary">Add Store</button>
-            </div>
-
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Address</th>
-                  <th>Owner</th>
-                  <th>Average Rating</th>
-                  <th>Total Ratings</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stores.map((store) => (
-                  <tr key={store.id}>
-                    <td>{store.name}</td>
-                    <td>{store.email}</td>
-                    <td>{store.address}</td>
-                    <td>{store.owner_name || 'Unassigned'}</td>
-                    <td>{store.average_rating ? Number(store.average_rating).toFixed(1) : 'N/A'}</td>
-                    <td>{store.total_ratings || 0}</td>
-                    <td>
-                      <button onClick={() => handleDeleteStore(store.id)} className="btn-danger">Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="topbar-actions">
+            <span className="user-pill"><span className="mini-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'A'}</span>{user?.name}</span>
           </div>
-        )}
+        </header>
+
+        <div className="dashboard-page">
+          {activeTab === 'dashboard' && (
+            <>
+              <div className="metric-grid">
+                <div className="metric-card metric-card--accent">
+                  <div className="metric-card__header">
+                    <span className="metric-card__label">Total Users</span>
+                    <span className="metric-card__icon">👥</span>
+                  </div>
+                  <div className="metric-card__value">{stats.totalUsers}</div>
+                  <div className="metric-card__meta positive">+12% from last month</div>
+                </div>
+
+                <div className="metric-card">
+                  <div className="metric-card__header">
+                    <span className="metric-card__label">Total Stores</span>
+                    <span className="metric-card__icon">🏪</span>
+                  </div>
+                  <div className="metric-card__value">{stats.totalStores}</div>
+                  <div className="metric-card__meta positive">+8% from last month</div>
+                </div>
+
+                <div className="metric-card">
+                  <div className="metric-card__header">
+                    <span className="metric-card__label">Total Ratings</span>
+                    <span className="metric-card__icon">⭐</span>
+                  </div>
+                  <div className="metric-card__value">{stats.totalRatings}</div>
+                  <div className="metric-card__meta positive">+15% from last month</div>
+                </div>
+
+                <div className="metric-card">
+                  <div className="metric-card__header">
+                    <span className="metric-card__label">Quick Actions</span>
+                    <span className="metric-card__icon">⚡</span>
+                  </div>
+                  <div className="metric-card__meta" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '18px' }}>
+                    <button onClick={() => setShowUserForm(true)} className="btn-primary">Add User</button>
+                    <button onClick={() => setShowStoreForm(true)} className="btn-secondary">Add Store</button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="panel table-panel">
+                <div className="panel-header">
+                  <h3 className="panel-title">Recent Users</h3>
+                  <button className="btn-secondary" onClick={() => setActiveTab('users')}>View all</button>
+                </div>
+                <div className="table-scroll">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.slice(0, 5).map((item) => (
+                        <tr key={item.id}>
+                          <td>{item.name}</td>
+                          <td>{item.email}</td>
+                          <td><span className={`role-badge ${item.role}`}>{item.role}</span></td>
+                          <td>{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'users' && (
+            <div className="panel table-panel">
+              <div className="panel-header">
+                <h3 className="panel-title">Users</h3>
+                <button className="btn-primary" onClick={() => setShowUserForm(true)}>Add User</button>
+              </div>
+              <div className="table-filter-row">
+                <input type="text" placeholder="Filter by name" value={userFilters.name} onChange={(e) => setUserFilters({ ...userFilters, name: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchUsers()} />
+                <input type="text" placeholder="Filter by email" value={userFilters.email} onChange={(e) => setUserFilters({ ...userFilters, email: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchUsers()} />
+                <input type="text" placeholder="Filter by address" value={userFilters.address} onChange={(e) => setUserFilters({ ...userFilters, address: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchUsers()} />
+                <select value={userFilters.role} onChange={(e) => setUserFilters({ ...userFilters, role: e.target.value })}>
+                  <option value="">All Roles</option>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                  <option value="owner">Owner</option>
+                </select>
+                <button className="btn-secondary" onClick={fetchUsers}>Apply</button>
+              </div>
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Address</th>
+                      <th>Role</th>
+                      <th>Rating</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.email}</td>
+                        <td>{item.address || 'N/A'}</td>
+                        <td><span className={`role-badge ${item.role}`}>{item.role}</span></td>
+                        <td>{item.role === 'owner' ? (item.rating ? Number(item.rating).toFixed(1) : 'No ratings') : '-'}</td>
+                        <td>
+                          {item.role !== 'admin' && (
+                            <button onClick={() => handleDeleteUser(item.id)} className="btn-danger">Delete</button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'stores' && (
+            <div className="panel table-panel">
+              <div className="panel-header">
+                <h3 className="panel-title">Stores</h3>
+                <button className="btn-primary" onClick={() => setShowStoreForm(true)}>Add Store</button>
+              </div>
+              <div className="table-filter-row">
+                <input type="text" placeholder="Filter by name" value={storeFilters.name} onChange={(e) => setStoreFilters({ ...storeFilters, name: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchStores()} />
+                <input type="text" placeholder="Filter by email" value={storeFilters.email} onChange={(e) => setStoreFilters({ ...storeFilters, email: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchStores()} />
+                <input type="text" placeholder="Filter by address" value={storeFilters.address} onChange={(e) => setStoreFilters({ ...storeFilters, address: e.target.value })} onKeyPress={(e) => e.key === 'Enter' && fetchStores()} />
+                <button className="btn-secondary" onClick={fetchStores}>Apply</button>
+              </div>
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Address</th>
+                      <th>Owner</th>
+                      <th>Average Rating</th>
+                      <th>Total Ratings</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stores.map((store) => (
+                      <tr key={store.id}>
+                        <td>{store.name}</td>
+                        <td>{store.email}</td>
+                        <td>{store.address}</td>
+                        <td>{store.owner_name || 'Unassigned'}</td>
+                        <td>{store.average_rating ? Number(store.average_rating).toFixed(1) : 'N/A'}</td>
+                        <td>{store.total_ratings || 0}</td>
+                        <td><button onClick={() => handleDeleteStore(store.id)} className="btn-danger">Delete</button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* User Form Modal */}
       {showUserForm && (
         <div className="modal-overlay" onClick={() => setShowUserForm(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Add New User</h2>
             <form onSubmit={handleCreateUser}>
-              <div className="form-group">
-                <label>Name (20-60 chars)</label>
-                <input
-                  type="text"
-                  value={newUser.name}
-                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  required
-                  minLength={20}
-                  maxLength={60}
-                />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={newUser.email}
-                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Password (8-16 chars, 1 uppercase, 1 special)</label>
-                <input
-                  type="password"
-                  value={newUser.password}
-                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  required
-                  minLength={8}
-                  maxLength={16}
-                />
-              </div>
-              <div className="form-group">
-                <label>Address (max 400 chars)</label>
-                <textarea
-                  value={newUser.address}
-                  onChange={(e) => setNewUser({ ...newUser, address: e.target.value })}
-                  maxLength={400}
-                  rows="2"
-                />
-              </div>
-              <div className="form-group">
-                <label>Role</label>
-                <select
-                  value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                >
-                  <option value="user">User</option>
-                  <option value="owner">Store Owner</option>
-                  <option value="admin">Admin</option>
-                </select>
+              <div className="form-grid">
+                <div className="form-group field-wide">
+                  <label>Name (20-60 chars)</label>
+                  <input type="text" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} required minLength={20} maxLength={60} />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} required minLength={8} maxLength={16} />
+                </div>
+                <div className="form-group field-wide">
+                  <label>Address</label>
+                  <textarea value={newUser.address} onChange={(e) => setNewUser({ ...newUser, address: e.target.value })} rows="2" maxLength={400} />
+                </div>
+                <div className="form-group field-wide">
+                  <label>Role</label>
+                  <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}>
+                    <option value="user">User</option>
+                    <option value="owner">Store Owner</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
               </div>
               <div className="modal-actions">
+                <button type="button" className="btn-ghost" onClick={() => setShowUserForm(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">Create User</button>
-                <button type="button" onClick={() => setShowUserForm(false)} className="btn-secondary">Cancel</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Store Form Modal */}
       {showStoreForm && (
         <div className="modal-overlay" onClick={() => setShowStoreForm(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Add New Store</h2>
             <form onSubmit={handleCreateStore}>
-              <div className="form-group">
-                <label>Store Name</label>
-                <input
-                  type="text"
-                  value={newStore.name}
-                  onChange={(e) => setNewStore({ ...newStore, name: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={newStore.email}
-                  onChange={(e) => setNewStore({ ...newStore, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Address</label>
-                <input
-                  type="text"
-                  value={newStore.address}
-                  onChange={(e) => setNewStore({ ...newStore, address: e.target.value })}
-                  required
-                  maxLength={400}
-                />
-              </div>
-              <div className="form-group">
-                <label>Assign owner (optional)</label>
-                <select
-                  value={newStore.ownerId}
-                  onChange={(e) => setNewStore({ ...newStore, ownerId: e.target.value })}
-                >
-                  <option value="">Leave unassigned</option>
-                  {users.filter((user) => user.role === 'owner').map((owner) => (
-                    <option key={owner.id} value={owner.id}>
-                      {owner.name} ({owner.email})
-                    </option>
-                  ))}
-                </select>
-                <small>Create an owner user first if no owner appears here.</small>
+              <div className="form-grid">
+                <div className="form-group field-wide">
+                  <label>Store Name</label>
+                  <input type="text" value={newStore.name} onChange={(e) => setNewStore({ ...newStore, name: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input type="email" value={newStore.email} onChange={(e) => setNewStore({ ...newStore, email: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Address</label>
+                  <input type="text" value={newStore.address} onChange={(e) => setNewStore({ ...newStore, address: e.target.value })} required maxLength={400} />
+                </div>
+                <div className="form-group field-wide">
+                  <label>Assign owner (optional)</label>
+                  <select value={newStore.ownerId} onChange={(e) => setNewStore({ ...newStore, ownerId: e.target.value })}>
+                    <option value="">Leave unassigned</option>
+                    {users.filter((userItem) => userItem.role === 'owner').map((ownerItem) => (
+                      <option key={ownerItem.id} value={ownerItem.id}>{ownerItem.name} ({ownerItem.email})</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="modal-actions">
+                <button type="button" className="btn-ghost" onClick={() => setShowStoreForm(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">Create Store</button>
-                <button type="button" onClick={() => setShowStoreForm(false)} className="btn-secondary">Cancel</button>
               </div>
             </form>
           </div>

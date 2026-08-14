@@ -15,40 +15,39 @@ function StoreCard({ store, onRate }) {
   const avgRating = Number(store.avg_rating ?? store.average_rating ?? store.overall_rating ?? 0);
 
   return (
-    <div style={{
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '1rem',
-      marginBottom: '1rem',
-      backgroundColor: '#f9f9f9'
-    }}>
-      <h3>{store.name}</h3>
-      <p><strong>Email:</strong> {store.email}</p>
-      <p><strong>Address:</strong> {store.address}</p>
-      <p><strong>Average Rating:</strong> {avgRating > 0 ? avgRating.toFixed(1) : 'No ratings yet'} ⭐</p>
-
-      {user && user.role === 'user' && (
-        <div style={{ marginTop: '1rem' }}>
-          <label style={{ marginRight: '0.5rem' }}>Rate this store: </label>
-          <select value={rating} onChange={(e) => setRating(Number(e.target.value))} style={{ marginRight: '0.5rem' }}>
-            <option value={0}>Select rating</option>
-            <option value={1}>1 ⭐</option>
-            <option value={2}>2 ⭐</option>
-            <option value={3}>3 ⭐</option>
-            <option value={4}>4 ⭐</option>
-            <option value={5}>5 ⭐</option>
-          </select>
-          <button onClick={handleSubmitRating} disabled={rating === 0} style={{
-            padding: '0.5rem 1rem',
-            cursor: rating === 0 ? 'not-allowed' : 'pointer',
-            backgroundColor: rating === 0 ? '#ccc' : '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px'
-          }}>Submit Rating</button>
+    <article className="store-card">
+      <div className="store-card__image" />
+      <div className="store-card__body">
+        <div className="store-card__top">
+          <h3 className="store-card__name">{store.name}</h3>
+          <span className="star-row">★ {avgRating > 0 ? avgRating.toFixed(1) : 'New'}</span>
         </div>
-      )}
-    </div>
+
+        <div className="store-card__meta">
+          <div>{store.email}</div>
+          <div>{store.address}</div>
+        </div>
+
+        <div className="store-card__footer">
+          <span className="store-card__rating">{avgRating > 0 ? avgRating.toFixed(1) : 'No ratings yet'}</span>
+          <span className="variant-label owner">Popular</span>
+        </div>
+
+        {user && user.role === 'user' && (
+          <div className="rating-form">
+            <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
+              <option value={0}>Rate</option>
+              <option value={1}>1 ★</option>
+              <option value={2}>2 ★</option>
+              <option value={3}>3 ★</option>
+              <option value={4}>4 ★</option>
+              <option value={5}>5 ★</option>
+            </select>
+            <button className="btn-primary" onClick={handleSubmitRating} disabled={rating === 0}>Submit</button>
+          </div>
+        )}
+      </div>
+    </article>
   );
 }
 

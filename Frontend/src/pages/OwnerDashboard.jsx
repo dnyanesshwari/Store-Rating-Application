@@ -46,115 +46,173 @@ const OwnerDashboard = () => {
 
   return (
     <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>Store Owner Dashboard</h1>
-        <div className="user-info">
-          <span>Welcome, {user?.name}</span>
-          <button onClick={() => setShowPasswordModal(true)} className="btn-secondary">
-            Change Password
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-mark">★</span>
+          <span>StoreRate</span>
+        </div>
+
+        <nav className="sidebar-nav">
+          <button className="nav-item active">
+            <span className="nav-dot" /> Dashboard
           </button>
-          <button onClick={logoutUser} className="logout-btn">Logout</button>
-        </div>
-      </header>
+          <button className="nav-item">
+            <span className="nav-dot" /> My Stores
+          </button>
+          <button className="nav-item">
+            <span className="nav-dot" /> Ratings
+          </button>
+        </nav>
 
-      <div className="owner-stats">
-        <div className="stat-card">
-          <h3>Your Stores</h3>
-          <p className="stat-number">{dashboardData.stores.length}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Average Rating</h3>
-          <p className="stat-number">{dashboardData.averageRating ? Number(dashboardData.averageRating).toFixed(1) : 'N/A'}</p>
-        </div>
-        <div className="stat-card">
-          <h3>Total Ratings Received</h3>
-          <p className="stat-number">{dashboardData.totalRatings}</p>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="loading">Loading dashboard...</div>
-      ) : (
-        <>
-          {dashboardData.stores.length === 0 ? (
-            <div className="no-stores-message">
-              <p>You don't have any stores assigned yet. Contact an admin to get a store assigned.</p>
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="avatar">{user?.name?.charAt(0)?.toUpperCase() || 'O'}</div>
+            <div>
+              <div>{user?.name}</div>
+              <small>Owner</small>
             </div>
+          </div>
+          <button className="btn-ghost" style={{ width: '100%', marginTop: '12px' }} onClick={logoutUser}>Log out</button>
+        </div>
+      </aside>
+
+      <main className="dashboard-main">
+        <header className="topbar">
+          <div className="topbar-title">
+            <h2>Owner Dashboard</h2>
+            <div className="topbar-subtitle">Welcome back, {user?.name}</div>
+          </div>
+          <div className="topbar-actions">
+            <button className="btn-secondary" onClick={() => setShowPasswordModal(true)}>Change Password</button>
+            <span className="user-pill"><span className="mini-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'O'}</span>{user?.name}</span>
+          </div>
+        </header>
+
+        <div className="dashboard-page">
+          <div className="metric-grid">
+            <div className="metric-card metric-card--accent">
+              <div className="metric-card__header">
+                <span className="metric-card__label">Your Stores</span>
+                <span className="metric-card__icon">🏪</span>
+              </div>
+              <div className="metric-card__value">{dashboardData.stores.length}</div>
+              <div className="metric-card__meta positive">Active listings</div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-card__header">
+                <span className="metric-card__label">Average Rating</span>
+                <span className="metric-card__icon">⭐</span>
+              </div>
+              <div className="metric-card__value">{dashboardData.averageRating ? Number(dashboardData.averageRating).toFixed(1) : 'N/A'}</div>
+              <div className="metric-card__meta positive">Customer satisfaction</div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-card__header">
+                <span className="metric-card__label">Total Ratings</span>
+                <span className="metric-card__icon">📊</span>
+              </div>
+              <div className="metric-card__value">{dashboardData.totalRatings}</div>
+              <div className="metric-card__meta positive">Received so far</div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-card__header">
+                <span className="metric-card__label">Status</span>
+                <span className="metric-card__icon">✅</span>
+              </div>
+              <div className="metric-card__value">Live</div>
+              <div className="metric-card__meta positive">Healthy profile</div>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="loading">Loading dashboard...</div>
           ) : (
             <>
-              <h2 className="section-title">Your Stores</h2>
-              <div className="stores-grid">
-                {dashboardData.stores.map((store) => (
-                  <div key={store.id} className="store-card">
-                    <h3>{store.name}</h3>
-                    <p><strong>Email:</strong> {store.email}</p>
-                    <p><strong>Address:</strong> {store.address}</p>
-                  </div>
-                ))}
-              </div>
-
-              <h2 className="section-title">Recent Ratings</h2>
-              {dashboardData.ratings.length === 0 ? (
-                <p className="no-ratings">No ratings received yet.</p>
+              {dashboardData.stores.length === 0 ? (
+                <div className="panel empty-state">
+                  <p>You don't have any stores assigned yet. Contact an admin to get a store assigned.</p>
+                </div>
               ) : (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Email</th>
-                      <th>Store</th>
-                      <th>Rating</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dashboardData.ratings.map((rating) => (
-                      <tr key={rating.id}>
-                        <td>{rating.user_name}</td>
-                        <td>{rating.user_email}</td>
-                        <td>{rating.store_name}</td>
-                        <td>⭐ {rating.rating}</td>
-                        <td>{new Date(rating.created_at).toLocaleDateString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <>
+                  <div className="panel">
+                    <div className="panel-header">
+                      <h3 className="panel-title">Your Stores</h3>
+                    </div>
+                    <div className="store-grid">
+                      {dashboardData.stores.map((store) => (
+                        <div key={store.id} className="store-card">
+                          <div className="store-card__image" />
+                          <div className="store-card__body">
+                            <div className="store-card__top">
+                              <h3 className="store-card__name">{store.name}</h3>
+                              <span className="star-row">★ {dashboardData.averageRating ? Number(dashboardData.averageRating).toFixed(1) : 'N/A'}</span>
+                            </div>
+                            <div className="store-card__meta">
+                              <div><strong>Email:</strong> {store.email}</div>
+                              <div><strong>Address:</strong> {store.address}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="panel table-panel">
+                    <div className="panel-header">
+                      <h3 className="panel-title">Recent Ratings</h3>
+                    </div>
+                    <div className="table-scroll">
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Store</th>
+                            <th>Rating</th>
+                            <th>Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dashboardData.ratings.map((rating) => (
+                            <tr key={rating.id}>
+                              <td>{rating.user_name}</td>
+                              <td>{rating.user_email}</td>
+                              <td>{rating.store_name}</td>
+                              <td>⭐ {rating.rating}</td>
+                              <td>{new Date(rating.created_at).toLocaleDateString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               )}
             </>
           )}
-        </>
-      )}
+        </div>
+      </main>
 
-      {/* Password Change Modal */}
       {showPasswordModal && (
         <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <h2>Change Password</h2>
             <form onSubmit={handlePasswordUpdate}>
               <div className="form-group">
                 <label>Current Password</label>
-                <input
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                  required
-                />
+                <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} required />
               </div>
               <div className="form-group">
                 <label>New Password</label>
-                <input
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                  required
-                  minLength={8}
-                  maxLength={16}
-                />
-                <small>8-16 chars, at least 1 uppercase & 1 special character</small>
+                <input type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} required minLength={8} maxLength={16} />
+                <small>8-16 characters, at least 1 uppercase and 1 special character</small>
               </div>
               <div className="modal-actions">
+                <button type="button" className="btn-ghost" onClick={() => setShowPasswordModal(false)}>Cancel</button>
                 <button type="submit" className="btn-primary">Update Password</button>
-                <button type="button" onClick={() => setShowPasswordModal(false)} className="btn-secondary">Cancel</button>
               </div>
             </form>
           </div>

@@ -9,6 +9,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { loginUser } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -57,15 +58,26 @@ const Login = () => {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              required
-              placeholder="Enter your password"
-            />
+            <div className="password-field">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? '🙈' : '👁'}
+              </button>
+            </div>
           </div>
-          <button type="submit" disabled={loading}>
+          <button type="submit" className="auth-button" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
