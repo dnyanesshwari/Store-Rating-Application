@@ -1,0 +1,17 @@
+# Node
+node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+
+# Build output
+Frontend/dist/
+Backend/.env
+.env
+**/.env
+
+# Logs
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.vscode/

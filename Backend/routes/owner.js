@@ -11,7 +11,7 @@ router.get('/dashboard', async (req, res) => {
     const ownerId = req.user.id;
 
     const storeResult = await pool.query(
-      'SELECT id, name, email, address FROM stores WHERE owner_id = $1 ORDER BY name ASC',
+      'SELECT id, name, email, address FROM stores WHERE owner_id = ? ORDER BY name ASC',
       [ownerId]
     );
 
@@ -27,14 +27,14 @@ router.get('/dashboard', async (req, res) => {
        FROM ratings r
        JOIN users u ON r.user_id = u.id
        JOIN stores s ON r.store_id = s.id
-       WHERE r.store_id IN ($1)
+       WHERE r.store_id IN (?)
        ORDER BY r.created_at DESC`,
       [storeIds]
     );
 
     const avgResult = await pool.query(
       `SELECT COALESCE(AVG(rating), 0) AS average_rating, COUNT(*) AS total_ratings
-       FROM ratings WHERE store_id IN ($1)`,
+       FROM ratings WHERE store_id IN (?)`,
       [storeIds]
     );
 

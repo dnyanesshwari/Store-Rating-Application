@@ -18,7 +18,7 @@ router.post('/register', async (req, res) => {
         const { name, email, password, address } = req.body;
 
         // Check existing user
-        const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+        const existing = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
         if (existing.rows.length > 0) {
             return res.status(400).json({ error: 'Email already registered' });
         }
@@ -27,14 +27,17 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create user (role 'user' by default)
-        const result = await pool.query(
+        const insertResult = await pool.query(
             `INSERT INTO users (name, email, password_hash, address, role) 
-             VALUES ($1, $2, $3, $4, 'user') 
-             RETURNING id, name, email, role, address`,
+             VALUES (?, ?, ?, ?, 'user')`,
             [name, email, hashedPassword, address]
         );
 
-        const user = result.rows[0];
+        const userResult = await pool.query(
+            'SELECT id, name, email, role, address FROM users WHERE id = ?',
+            [insertResult.insertId]
+        );
+        const user = userResult.rows[0];
 
         // Generate JWT
         const token = jwt.sign(
@@ -70,7 +73,7 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
 
         const result = await pool.query(
-            'SELECT id, name, email, password_hash, role, address FROM users WHERE email = $1',
+            'SELECT id, name, email, password_hash, role, address FROM users WHERE email = ?',
             [email]
         );
 
@@ -120,7 +123,7 @@ router.put('/update-password', authenticate, async (req, res) => {
 
         // Verify current password
         const result = await pool.query(
-            'SELECT password_hash FROM users WHERE id = $1',
+            'SELECT password_hash FROM users WHERE id = ?',
             [userId]
         );
 
@@ -136,7 +139,7 @@ router.put('/update-password', authenticate, async (req, res) => {
         // Update password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await pool.query(
-            'UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+            'UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [hashedPassword, userId]
         );
 

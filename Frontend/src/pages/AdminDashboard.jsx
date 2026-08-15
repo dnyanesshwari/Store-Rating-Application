@@ -41,7 +41,8 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const response = await admin.getUsers(userFilters);
-      setUsers(response.data);
+      const payload = response.data;
+      setUsers(Array.isArray(payload) ? payload : payload.items || []);
     } catch (error) {
       toast.error('Failed to fetch users');
     } finally {
@@ -53,7 +54,8 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const response = await admin.getStores(storeFilters);
-      setStores(response.data);
+      const payload = response.data;
+      setStores(Array.isArray(payload) ? payload : payload.items || []);
     } catch (error) {
       toast.error('Failed to fetch stores');
     } finally {

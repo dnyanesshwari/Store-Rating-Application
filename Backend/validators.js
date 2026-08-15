@@ -1,9 +1,9 @@
 const Joi = require('joi');
 
 // Validation schemas
-const nameSchema = Joi.string().min(20).max(60).required()
+const nameSchema = Joi.string().min(2).max(60).required()
     .messages({
-        'string.min': 'Name must be at least 20 characters',
+        'string.min': 'Name must be at least 2 characters',
         'string.max': 'Name cannot exceed 60 characters',
         'any.required': 'Name is required'
     });
@@ -86,16 +86,15 @@ module.exports = {
 
     validateSearch: (data) => {
         const schema = Joi.object({
-            // The frontend sends blank fields for filters that have not been
-            // filled in. Treat those as "no filter" instead of rejecting the
-            // entire request.
             query: Joi.string().min(1).max(100).allow(''),
+            search: Joi.string().min(1).max(100).allow(''),
             name: Joi.string().max(100).allow(''),
             email: Joi.string().email().allow(''),
             address: Joi.string().max(100).allow(''),
             role: Joi.string().valid('admin', 'user', 'owner').allow(''),
-            sortField: Joi.string().valid('name', 'email', 'address', 'created_at'),
-            sortDirection: Joi.string().valid('asc', 'desc'),
+            sortField: Joi.string().valid('name', 'email', 'address', 'role', 'created_at', 'owner_id').allow(''),
+            sortBy: Joi.string().valid('name', 'email', 'address', 'created_at').allow(''),
+            sortDirection: Joi.string().valid('asc', 'desc').allow(''),
             page: Joi.number().integer().min(1),
             limit: Joi.number().integer().min(1).max(100)
         });

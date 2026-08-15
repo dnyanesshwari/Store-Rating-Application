@@ -10,13 +10,19 @@ function UserStore() {
   const [search, setSearch] = useState({ query: '' });
 
   const loadStores = async () => {
-    const res = await getStores({ query: search.query });
-    setStores(res.data);
+    try {
+      const res = await getStores({ query: search.query });
+      const payload = res.data || {};
+      setStores(Array.isArray(payload) ? payload : payload.items || []);
+    } catch (error) {
+      console.error('Failed to load stores', error);
+      setStores([]);
+    }
   };
 
   useEffect(() => {
     loadStores();
-  }, []);
+  }, [search.query]);
 
   const handleSearch = (e) => {
     e.preventDefault();
