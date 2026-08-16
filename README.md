@@ -71,9 +71,7 @@ Built with **React, Node.js, Express, and MySQL**, the application supports **Sy
 
 ## 📸 Project Preview
 
-<p align="center">
-  <img src=""C:\Users\Admin\OneDrive\Pictures\Screenshots\admin_dashboard.png.png"" alt="StoreRate Admin Dashboard" width="100%">
-</p>
+<p align="center"> <img src="./screenshots/admin_dashboard.png" alt="StoreRate Admin Dashboard" width="100%"> </p>
 
 ### Store Listing
 
