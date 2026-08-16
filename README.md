@@ -69,21 +69,16 @@ Built with **React, Node.js, Express, and MySQL**, the application supports **Sy
 
 ### Admin Dashboard
 
-## 📸 Project Preview
-
 <p align="center"> <img src="./screenshots/admin_dashboard.png" alt="StoreRate Admin Dashboard" width="100%"> </p>
 
-### Store Listing
+### User Dashboard
 
-Add screenshot here
-
-### Store Details
-
-Add screenshot here
+<p align="center"> <img src="./screenshots/user_dashboard.png" alt="StoreRate Admin Dashboard" width="100%"> </p>
 
 ### Owner Dashboard
 
-Add screenshot here
+<p align="center"> <img src="./screenshots/owner_dashboard.png" alt="StoreRate Admin Dashboard" width="100%"> </p>
+
 
 ---
 
