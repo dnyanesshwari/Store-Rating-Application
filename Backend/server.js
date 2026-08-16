@@ -51,9 +51,19 @@ app.use((req, res) => {
 });
 
 if (require.main === module) {
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
         console.log(`Health check: http://localhost:${PORT}/api/health`);
+    });
+
+    server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.error(`\n[Error] Port ${PORT} is already in use.`);
+            console.error(`Kill the existing process on port ${PORT} or change PORT in your .env file.\n`);
+            process.exit(1); // Exits cleanly without dumping the node.js stack trace
+        } else {
+            throw err;
+        }
     });
 }
 

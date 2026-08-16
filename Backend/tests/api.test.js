@@ -61,6 +61,12 @@ jest.mock('../config/db', () => {
         return buildRows(row ? [{ id: row.id }] : []);
       }
 
+      if (text.startsWith('SELECT password_hash FROM users WHERE id = ?')) {
+        const id = Number(values[0]);
+        const row = users.find((u) => u.id === id);
+        return buildRows(row ? [{ password_hash: row.password_hash }] : []);
+      }
+
       if (text.startsWith('SELECT id FROM stores WHERE id = ?')) {
         const id = Number(values[0]);
         const row = stores.find((s) => s.id === id);
@@ -193,5 +199,26 @@ describe('Store Rating API', () => {
     expect(res.status).toBe(200);
     expect(res.body.items).toBeDefined();
     expect(Array.isArray(res.body.items)).toBe(true);
+  });
+
+  test('updates a logged-in user password', async () => {
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'user@example.com', password: 'Password!123' });
+
+    const res = await request(app)
+      .put('/api/auth/update-password')
+      .set('Authorization', `Bearer ${login.body.token}`)
+      .send({ currentPassword: 'Password!123', newPassword: 'NewPassword!456' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe('Password updated successfully');
+
+    const loginAgain = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'user@example.com', password: 'NewPassword!456' });
+
+    expect(loginAgain.status).toBe(200);
+    expect(loginAgain.body.user.email).toBe('user@example.com');
   });
 });

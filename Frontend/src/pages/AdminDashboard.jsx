@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
-import { admin } from '../api';
+import { admin, auth } from '../api';
 import toast from 'react-hot-toast';
 import './Dashboard.css';
 
@@ -15,8 +15,10 @@ const AdminDashboard = () => {
   // Form states
   const [showUserForm, setShowUserForm] = useState(false);
   const [showStoreForm, setShowStoreForm] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', address: '', role: 'user' });
   const [newStore, setNewStore] = useState({ name: '', email: '', address: '', ownerId: '' });
+  const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
   
   // Filter states
   const [userFilters, setUserFilters] = useState({ name: '', email: '', address: '', role: '' });
@@ -115,6 +117,18 @@ const AdminDashboard = () => {
     }
   };
 
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      await auth.updatePassword(passwordData);
+      toast.success('Password updated successfully!');
+      setShowPasswordModal(false);
+      setPasswordData({ currentPassword: '', newPassword: '' });
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to update password');
+    }
+  };
+
   return (
     <div className="dashboard">
       <aside className="sidebar">
@@ -154,6 +168,7 @@ const AdminDashboard = () => {
             <div className="topbar-subtitle">Welcome back, {user?.name}</div>
           </div>
           <div className="topbar-actions">
+            <button className="btn-secondary" onClick={() => setShowPasswordModal(true)}>Change Password</button>
             <span className="user-pill"><span className="mini-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'A'}</span>{user?.name}</span>
           </div>
         </header>
@@ -327,6 +342,29 @@ const AdminDashboard = () => {
           )}
         </div>
       </main>
+
+      {showPasswordModal && (
+        <div className="modal-overlay" onClick={() => setShowPasswordModal(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2>Change Password</h2>
+            <form onSubmit={handlePasswordUpdate}>
+              <div className="form-group">
+                <label>Current Password</label>
+                <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} required />
+              </div>
+              <div className="form-group">
+                <label>New Password</label>
+                <input type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} required minLength={8} maxLength={16} />
+                <small>8-16 characters, at least 1 uppercase and 1 special character</small>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn-ghost" onClick={() => setShowPasswordModal(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">Update Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showUserForm && (
         <div className="modal-overlay" onClick={() => setShowUserForm(false)}>
